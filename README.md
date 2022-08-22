@@ -14,10 +14,16 @@
 <a href="https://semver.org/">
 	<img alt="Semantic Versioning: 2.0.0" src="https://img.shields.io/badge/Semantic--Versioning-2.0.0-a05f79?logo=semantic-release&logoColor=f97ff0">
 </a>
+<a href="https://pkg.go.dev/github.com/mauroalderete/gcode-cli">
+	<img src="https://pkg.go.dev/badge/github.com/mauroalderete/gcode-cli.svg" alt="Go Reference">
+</a>
 
 [![Tests](https://github.com/mauroalderete/gcode-cli/actions/workflows/tests.yml/badge.svg)](https://github.com/mauroalderete/gcode-cli/actions/workflows/tests.yml)
 [![CodeQL](https://github.com/mauroalderete/gcode-cli/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/mauroalderete/gcode-cli/actions/workflows/codeql-analysis.yml)
 [![codecov](https://codecov.io/gh/mauroalderete/gcode-cli/branch/main/graph/badge.svg?token=CLP8TDLSKG)](https://codecov.io/gh/mauroalderete/gcode-cli)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/mauroalderete/gcode-cli.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/mauroalderete/gcode-cli/alerts/)
+[![Maintainability](https://api.codeclimate.com/v1/badges/8fb5ba0230e2855815ad/maintainability)](https://codeclimate.com/github/mauroalderete/gcode-cli/maintainability)
+[![Go Report Card](https://goreportcard.com/badge/github.com/mauroalderete/gcode-cli)](https://goreportcard.com/report/github.com/mauroalderete/gcode-cli)
 
 <a href="https://github.com/mauroalderete/gcode-cli/issues/new/choose">Report Bug</a>
 ·
@@ -30,6 +36,13 @@
 
 &nbsp;
 
+# Content <!-- omit in toc -->
+- [:wave: Introducing `gcode-cli`](#wave-introducing-gcode-cli)
+- [:rocket: Upcomming Features](#rocket-upcomming-features)
+- [:hammer: How to Set up `gcode-cli` for Development?](#hammer-how-to-set-up-gcode-cli-for-development)
+- [:hamburger: Built With](#hamburger-built-with)
+- [:handshake: Contributing to `gcode-cli`](#handshake-contributing-to-gcode-cli)
+- [:pray: Support](#pray-support)
 
 &nbsp;
 # :wave: Introducing `gcode-cli`
@@ -52,6 +65,43 @@ Please, look at [Contributing to `gcode-cli`](#handshake-contributing-to-gcode-c
 - ✔️ Apply skew corrections.
 - ✔️ Files verification.
 - ✔️ Set checksum attribute to improve the integrity of the files.
+
+# :hammer: How to Set up `gcode-cli` for Development?
+
+You set up `gcode-cli` locally with a few easy steps.
+
+1. Clone the repository
+
+```bash
+git clone https://github.com/mauroalderete/gcode-cli
+```
+
+2. Change the working directory
+
+```bash
+cd gcode-cli
+```
+
+3. Restore module
+
+```bash
+go mod tidy
+```
+
+4. You can run all unit tests and examples to check it's working
+
+```bash
+go test ./...
+```
+
+5. Optionally, if you have godocs installed, You can run a server to access documentation via website at localhost.
+
+```bash
+GOROOT=$GOPATH godoc -http=localhost:9090
+```
+# :hamburger: Built With
+
+- [Golang](https://go.dev/) 1.18
 
 # :handshake: Contributing to `gcode-cli`
 

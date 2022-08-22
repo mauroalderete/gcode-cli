@@ -17,9 +17,9 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.ref }}
 
-      - name: Execute assign labels
+      - name: Assign labels
         id: action-assign-labels
-        uses: ./
+        uses: mauroalderete/action-assign-labels@v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           conventional-commits: |
