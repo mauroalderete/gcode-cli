@@ -5,24 +5,24 @@ import (
 	"io"
 )
 
-// ConfigurerNew is a interface that contains all functions that allows configure a new Description instance.
-type ConfigurerNew interface {
+// Configurer is a interface that contains all functions that allows configure a new [Description] instance.
+type Configurer interface {
 	// SetSource allows set the source content to get the metadatas.
 	SetSource(source io.Reader) error
 }
 
-// configurationPoolNew implement ConfigurerNew interface.
+// configure implement [Configurer] interface.
 //
-// Although of the public methods defined by ConfigurerNew,
-// configurationPoolNew can validate the options values and stores a series of clouser callbacks
+// Although of the public methods defined by [Configurer],
+// configure can validate the options values and stores a series of clouser callbacks
 // that recive a Describe instance.
 // This clouser callbacks operate with the Desribe instance and option values to apply the configuration.
-type configurationPoolNew struct {
+type configure struct {
 	pool []func(*Description) error
 }
 
-// SetSource implements ConfigurerNew.SetSource, return error if source is null
-func (c *configurationPoolNew) SetSource(source io.Reader) error {
+// SetSource implements [Configurer.SetSource], return error if source is null
+func (c *configure) SetSource(source io.Reader) error {
 
 	if source == nil {
 		return fmt.Errorf("describe requires a source: source is empty")
@@ -36,25 +36,25 @@ func (c *configurationPoolNew) SetSource(source io.Reader) error {
 	return nil
 }
 
-// New creates a instance of Description with all statics and metrics parsed from a gcode file.
+// New creates a instance of [Description] with all statics and metrics parsed from a gcode file.
 //
 // It recives a list of configurations callbacks to set a io.Reader instance as the source of gcode file.
 //
-// An error is returned if something was wrong while try initialize the Description instance.
-func New(options ...func(ConfigurerNew) error) (*Description, error) {
+// An error is returned if something was wrong while try initialize the [Description] instance.
+func New(options ...func(Configurer) error) (*Description, error) {
 
 	describe := &Description{}
 
-	configurer := &configurationPoolNew{}
+	cfg := &configure{}
 
 	for _, opt := range options {
-		err := opt(configurer)
+		err := opt(cfg)
 		if err != nil {
 			return nil, fmt.Errorf("failed to load Describe option: %v", err)
 		}
 	}
 
-	for _, config := range configurer.pool {
+	for _, config := range cfg.pool {
 		err := config(describe)
 		if err != nil {
 			return nil, fmt.Errorf("failed to apply Describe option: %v", err)

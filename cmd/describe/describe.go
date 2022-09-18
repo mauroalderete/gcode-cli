@@ -58,7 +58,7 @@ func NewDescribeCommand() *cobra.Command {
 			return err
 		}
 
-		description, err := descriptionModule.New(func(cn descriptionModule.ConfigurerNew) error {
+		description, err := descriptionModule.New(func(cn descriptionModule.Configurer) error {
 			cn.SetSource(input)
 			return nil
 		})

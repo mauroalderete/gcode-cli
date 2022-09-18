@@ -1,12 +1,22 @@
-// Package describe provides a implementation that parse a gcode and recompile staticts and metrics.
+// Package describe provides a implementation that parse a gcode file to recompile staticts and metrics.
 package description
 
 import (
 	"io"
 )
 
-// Descriptionable is a main interface to handle a Description of a gcode file
+// Descriptionable is a main interface to handle a [Description] of a gcode file
 type Descriptionable interface {
+	// Filename returns the filename of the gcode file input
+	// or a string empty if the input from stdin.
+	Filename() string
+
+	// LinesCount return the number of lines contains in input,
+	// this includes comments.
+	LinesCount() int
+
+	// BlocksCount returns the number of lines that are a gcode block valid.
+	BlocksCount() int
 
 	// Parse evaluates the gcode file stored to fill the internal fields.
 	Parse() error
@@ -24,7 +34,22 @@ type Descriptionable interface {
 // Description implements Descriptionable interface
 type Description struct {
 	source      io.Reader
-	Filename    string `json:"filename"`
-	LinesCount  int    `json:"linesCount"`
-	BlocksCount int    `json:"blocksCount"`
+	filename    string
+	linesCount  int
+	blocksCount int
+}
+
+// Filename implements [Descriptionable.Filename]
+func (d Description) Filename() string {
+	return d.filename
+}
+
+// LinesCount implements [Descriptionable.LinesCount]
+func (d Description) LinesCount() int {
+	return d.linesCount
+}
+
+// BlocksCount implements [Descriptionable.BlocksCount]
+func (d Description) BlocksCount() int {
+	return d.blocksCount
 }
