@@ -6,7 +6,7 @@ import (
 	"io"
 	"os"
 
-	descriptionModule "github.com/mauroalderete/gcode-cli/description"
+	"github.com/mauroalderete/gcode-cli/description"
 	"github.com/spf13/cobra"
 )
 
@@ -53,13 +53,16 @@ func NewDescribeCommand() *cobra.Command {
 	// Consumes options to determine the correct behaivour
 	cmd.RunE = func(cmd *cobra.Command, args []string) error {
 
-		filename, input, err := getInput(cmd.InOrStdin(), args)
+		input, err := getInput(cmd.InOrStdin(), args)
 		if err != nil {
 			return err
 		}
 
-		description, err := descriptionModule.New(func(cn descriptionModule.Configurer) error {
-			cn.SetFilename(filename)
+		description, err := description.New(func(cn description.Configurer) error {
+			if len(args) > 0 && args[0] != "-" {
+				cn.SetFilename(args[0])
+			}
+
 			cn.SetSource(input)
 			return nil
 		})
@@ -88,27 +91,27 @@ func NewDescribeCommand() *cobra.Command {
 }
 
 // getInput return the correct input of gcode file as io.Reader instance according to arguments available
-func getInput(stdio io.Reader, args []string) (string, io.Reader, error) {
+func getInput(stdio io.Reader, args []string) (io.Reader, error) {
 
 	var input io.Reader = stdio
 
 	if len(args) > 0 && args[0] != "-" {
 		file, err := os.Open(args[0])
 		if err != nil {
-			return "", nil, fmt.Errorf("failed open file: %v", err)
+			return nil, fmt.Errorf("failed open file: %v", err)
 		}
 		input = file
 	}
 
 	if input == nil {
-		return "", nil, fmt.Errorf("input missing")
+		return nil, fmt.Errorf("input missing")
 	}
 
-	return args[0], input, nil
+	return input, nil
 }
 
 // printJson prints on the stdout the Description instance in JSON format
-func printJson(d descriptionModule.Descriptionable) error {
+func printJson(d description.Descriptionable) error {
 
 	parsed, err := d.FormatJSON()
 	if err != nil {
@@ -120,11 +123,11 @@ func printJson(d descriptionModule.Descriptionable) error {
 }
 
 // printYaml prints on the stdout the Description instance in YAML format
-func printYaml(d descriptionModule.Descriptionable) error {
+func printYaml(d description.Descriptionable) error {
 	return nil
 }
 
 // printTempalte prints on the stdout the Description instance using a Go template format
-func printTemplate(d descriptionModule.Descriptionable, template string) error {
+func printTemplate(d description.Descriptionable, template string) error {
 	return nil
 }

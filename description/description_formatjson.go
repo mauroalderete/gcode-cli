@@ -22,7 +22,7 @@ func (d *Description) FormatJSON() (string, error) {
 
 	parsed, err := json.Marshal(dd)
 	if err != nil {
-		return "", fmt.Errorf("failed to parse description in json format: %v", err)
+		return "", fmt.Errorf("failed to marshall json format: %v", err)
 	}
 
 	return string(parsed), nil
