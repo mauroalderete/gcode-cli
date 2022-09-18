@@ -9,6 +9,8 @@ import (
 type Configurer interface {
 	// SetSource allows set the source content to get the metadatas.
 	SetSource(source io.Reader) error
+	// SetFilename allows set the file path to the source content.
+	SetFilename(filename string) error
 }
 
 // configure implement [Configurer] interface.
@@ -30,6 +32,17 @@ func (c *configure) SetSource(source io.Reader) error {
 
 	c.pool = append(c.pool, func(d *Description) error {
 		d.source = source
+		return nil
+	})
+
+	return nil
+}
+
+// SetFilename implements [Configurer.SetSource], return error if source is null
+func (c *configure) SetFilename(filename string) error {
+
+	c.pool = append(c.pool, func(d *Description) error {
+		d.filename = filename
 		return nil
 	})
 

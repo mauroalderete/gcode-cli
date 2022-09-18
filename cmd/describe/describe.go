@@ -53,12 +53,13 @@ func NewDescribeCommand() *cobra.Command {
 	// Consumes options to determine the correct behaivour
 	cmd.RunE = func(cmd *cobra.Command, args []string) error {
 
-		input, err := getInput(cmd.InOrStdin(), args)
+		filename, input, err := getInput(cmd.InOrStdin(), args)
 		if err != nil {
 			return err
 		}
 
 		description, err := descriptionModule.New(func(cn descriptionModule.Configurer) error {
+			cn.SetFilename(filename)
 			cn.SetSource(input)
 			return nil
 		})
@@ -87,27 +88,34 @@ func NewDescribeCommand() *cobra.Command {
 }
 
 // getInput return the correct input of gcode file as io.Reader instance according to arguments available
-func getInput(stdio io.Reader, args []string) (io.Reader, error) {
+func getInput(stdio io.Reader, args []string) (string, io.Reader, error) {
 
 	var input io.Reader = stdio
 
 	if len(args) > 0 && args[0] != "-" {
 		file, err := os.Open(args[0])
 		if err != nil {
-			return nil, fmt.Errorf("failed open file: %v", err)
+			return "", nil, fmt.Errorf("failed open file: %v", err)
 		}
 		input = file
 	}
 
 	if input == nil {
-		return nil, fmt.Errorf("input missing")
+		return "", nil, fmt.Errorf("input missing")
 	}
 
-	return input, nil
+	return args[0], input, nil
 }
 
 // printJson prints on the stdout the Description instance in JSON format
 func printJson(d descriptionModule.Descriptionable) error {
+
+	parsed, err := d.FormatJSON()
+	if err != nil {
+		return fmt.Errorf("failed to get description in json format: %v", err)
+	}
+
+	fmt.Printf("%s\n", parsed)
 	return nil
 }
 

@@ -40,16 +40,16 @@ type Description struct {
 }
 
 // Filename implements [Descriptionable.Filename]
-func (d Description) Filename() string {
+func (d *Description) Filename() string {
 	return d.filename
 }
 
 // LinesCount implements [Descriptionable.LinesCount]
-func (d Description) LinesCount() int {
+func (d *Description) LinesCount() int {
 	return d.linesCount
 }
 
 // BlocksCount implements [Descriptionable.BlocksCount]
-func (d Description) BlocksCount() int {
+func (d *Description) BlocksCount() int {
 	return d.blocksCount
 }
