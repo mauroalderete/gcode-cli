@@ -154,11 +154,17 @@ func TestFormatYaml(t *testing.T) {
 		expected string
 		failed   bool
 	}{
-		"invalid": {"some content", ``, false},
+		"invalid": {"some content", `BlocksCount: 0
+Filename: ""
+LinesCount: 1
+`, false},
 		"valid": {`/ this is a comment
 		N1 G0
 		N2 G1 X2
-		// another comment`, ``, false},
+		// another comment`, `BlocksCount: 2
+Filename: ""
+LinesCount: 4
+`, false},
 	}
 
 	for k, v := range targets {
@@ -185,7 +191,7 @@ func TestFormatYaml(t *testing.T) {
 			}
 
 			if result != v.expected {
-				t.Errorf("want %v, got %v", v.expected, result)
+				t.Errorf("want (%d)[%v], got (%d)[%v]", len(v.expected), v.expected, len(result), result)
 				return
 			}
 		})

@@ -124,6 +124,12 @@ func printJson(d description.Descriptionable) error {
 
 // printYaml prints on the stdout the Description instance in YAML format
 func printYaml(d description.Descriptionable) error {
+	parsed, err := d.FormatYAML()
+	if err != nil {
+		return fmt.Errorf("failed to get description in yaml format: %v", err)
+	}
+
+	fmt.Printf("%s\n", parsed)
 	return nil
 }
 
