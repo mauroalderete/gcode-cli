@@ -18,6 +18,20 @@ type flag[T interface{}] struct {
 
 // NewDescribeCommand creates an instance of *cobra.Command with the behaviour
 // to print metadata from gcode file passed as argument or stdin.
+//
+// Print metadata from gcode [FILE]
+// With no FILE, or when FILE is -, read standard input.
+//
+// If the flags are not used, the output is equal to use format flag with his default pattern.
+//
+// You can use the format flag to pretty-print the text output using a Go template pattern.
+//
+// The fields available are:
+//
+//	Filename: Prints the name of [FILE] it is provided. Otherwise only print an empty character
+//	LinesCount: Prints lines quantity containing the source, whatever [FILE] either stdin.
+//	BlocksCount: Prints the amount of these lines are valid blocks.
+//	Coverage: Prints the percentage of the lines that are blocks
 func NewDescribeCommand() *cobra.Command {
 
 	// Initializes flags bindable
@@ -35,8 +49,18 @@ func NewDescribeCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "describe [FILE]",
 		Short: "Print metadata from gcode [FILE]",
-		Long:  `With no FILE, or when FILE is -, read standar input.`,
-		Args:  cobra.MaximumNArgs(1),
+		Long: `Print metadata from gcode [FILE]
+With no FILE, or when FILE is -, read standard input.
+
+If the flags are not used, the output is equal to use format flag with his default pattern.
+
+You can use the format flag to pretty-print the text output using a Go template pattern.
+The fields available are:
+	Filename: Prints the name of [FILE] it is provided. Otherwise only print an empty character
+	LinesCount: Prints lines quantity containing the source, whatever [FILE] either stdin.
+	BlocksCount: Prints the amount of these lines are valid blocks.
+	Coverage: Prints the percentage of the lines that are blocks`,
+		Args: cobra.MaximumNArgs(1),
 	}
 
 	// Load the falgs using options instance to binding the values
