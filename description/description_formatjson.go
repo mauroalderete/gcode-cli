@@ -5,22 +5,12 @@ import (
 	"fmt"
 )
 
-type descriptionJson struct {
-	Filename    string `json:"filename"`
-	LinesCount  int    `json:"linesCount"`
-	BlocksCount int    `json:"blocksCount"`
-}
-
 // FormatJSON implements [Descriptionable.FormatJSON]
 func (d *Description) FormatJSON() (string, error) {
 
-	dd := &descriptionJson{
-		Filename:    d.Filename(),
-		LinesCount:  d.LinesCount(),
-		BlocksCount: d.BlocksCount(),
-	}
+	dm := newDescriptionMarshable(*d)
 
-	parsed, err := json.Marshal(dd)
+	parsed, err := json.Marshal(dm)
 	if err != nil {
 		return "", fmt.Errorf("failed to marshall json format: %v", err)
 	}

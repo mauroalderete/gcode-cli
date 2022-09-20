@@ -28,7 +28,7 @@ type Descriptionable interface {
 	FormatYAML() (string, error)
 
 	// FormatTemplate returns the Descriptionable instance value using a Go template format or an error trying to do it.
-	FormatTemplate() (string, error)
+	FormatTemplate(template string) (string, error)
 }
 
 // Description implements Descriptionable interface
@@ -52,4 +52,25 @@ func (d *Description) LinesCount() int {
 // BlocksCount implements [Descriptionable.BlocksCount]
 func (d *Description) BlocksCount() int {
 	return d.blocksCount
+}
+
+type descriptionMarshable struct {
+	Filename    string `json:"filename" yaml:"filename"`
+	LinesCount  int    `json:"linesCount" yaml:"linesCount"`
+	BlocksCount int    `json:"blocksCount" yaml:"blocksCount"`
+	Coverage    int    `json:"coverage" yaml:"coverage"`
+}
+
+func newDescriptionMarshable(d Description) descriptionMarshable {
+	dm := descriptionMarshable{
+		Filename:    d.Filename(),
+		LinesCount:  d.LinesCount(),
+		BlocksCount: d.BlocksCount(),
+	}
+
+	if d.BlocksCount() != 0 {
+		dm.Coverage = d.BlocksCount() * 100 / d.LinesCount()
+	}
+
+	return dm
 }

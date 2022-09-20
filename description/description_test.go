@@ -109,11 +109,11 @@ func TestFormatJson(t *testing.T) {
 		expected string
 		failed   bool
 	}{
-		"invalid": {"some content", `{"filename":"","linesCount":1,"blocksCount":0}`, false},
+		"invalid": {"some content", `{"filename":"","linesCount":1,"blocksCount":0,"coverage":0}`, false},
 		"valid": {`/ this is a comment
 		N1 G0
 		N2 G1 X2
-		// another comment`, `{"filename":"","linesCount":4,"blocksCount":2}`, false},
+		// another comment`, `{"filename":"","linesCount":4,"blocksCount":2,"coverage":50}`, false},
 	}
 
 	for k, v := range targets {
@@ -154,16 +154,18 @@ func TestFormatYaml(t *testing.T) {
 		expected string
 		failed   bool
 	}{
-		"invalid": {"some content", `BlocksCount: 0
-Filename: ""
-LinesCount: 1
+		"invalid": {"some content", `blocksCount: 0
+coverage: 0
+filename: ""
+linesCount: 1
 `, false},
 		"valid": {`/ this is a comment
 		N1 G0
 		N2 G1 X2
-		// another comment`, `BlocksCount: 2
-Filename: ""
-LinesCount: 4
+		// another comment`, `blocksCount: 2
+coverage: 50
+filename: ""
+linesCount: 4
 `, false},
 	}
 
@@ -206,11 +208,13 @@ func TestFormatTemplate(t *testing.T) {
 		expected string
 		failed   bool
 	}{
-		"invalid": {"some content", "", ``, false},
+		"template bad input0": {"some content", "{.Filenames}{{> 3}}}", "", true},
+		"template bad input1": {"some content", "{{.Filenames}}", "", true},
+		"invalid":             {"some content", "{{.Filename}}\t{{.LinesCount}}\t{{.BlocksCount}}", "\t1\t0", false},
 		"valid": {`/ this is a comment
 		N1 G0
 		N2 G1 X2
-		// another comment`, "", ``, false},
+		// another comment`, "{{.Filename}}\t{{.LinesCount}}\t{{.BlocksCount}}", "\t4\t2", false},
 	}
 
 	for k, v := range targets {
@@ -230,7 +234,7 @@ func TestFormatTemplate(t *testing.T) {
 				return
 			}
 
-			result, err := desc.FormatTemplate()
+			result, err := desc.FormatTemplate(v.template)
 			if (err == nil) == v.failed {
 				t.Errorf("want error == %v, got error == %v: %v", v.failed, !v.failed, err)
 				return

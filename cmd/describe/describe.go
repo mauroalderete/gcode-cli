@@ -28,7 +28,7 @@ func NewDescribeCommand() *cobra.Command {
 	}{
 		json:     flag[bool]{name: "json", value: false},
 		yaml:     flag[bool]{name: "yaml", value: false},
-		template: flag[string]{name: "format", value: ""},
+		template: flag[string]{name: "format", value: "{{.Filename}}\t{{.LinesCount}}\t{{.BlocksCount}}\t{{.Coverage}}%"},
 	}
 
 	// Defines the command describe
@@ -135,5 +135,11 @@ func printYaml(d description.Descriptionable) error {
 
 // printTempalte prints on the stdout the Description instance using a Go template format
 func printTemplate(d description.Descriptionable, template string) error {
+	parsed, err := d.FormatTemplate(template)
+	if err != nil {
+		return fmt.Errorf("failed to get description in yaml format: %v", err)
+	}
+
+	fmt.Printf("%s\n", parsed)
 	return nil
 }
