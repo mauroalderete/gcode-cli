@@ -1,9 +1,12 @@
 package gcodefile
 
 import (
+	"fmt"
 	"io"
 	"strings"
 	"testing"
+
+	"github.com/mauroalderete/gcode-core/block/gcodeblock"
 )
 
 func TestNewFromReader(t *testing.T) {
@@ -112,11 +115,55 @@ func TestGcodeFile_Gcodes(t *testing.T) {
 
 }
 
-func TestGcodeFile_Refresh(t *testing.T) {
-
-}
-
 func TestGcodeFile_Update(t *testing.T) {
+
+	t.Run("double refresh", func(t *testing.T) {
+		targets := map[string]struct {
+			source string
+		}{
+			"a": {"G1 X1"},
+		}
+
+		for k, v := range targets {
+			t.Run(k, func(t *testing.T) {
+
+				gf, err := NewFromReader(strings.NewReader(v.source))
+				if err != nil {
+					t.Errorf("want error nil, got error %v", err)
+					return
+				}
+
+				if gf == nil {
+					t.Errorf("want gcodefile not nil, got gcodefile nil")
+					return
+				}
+
+				gc := gf.Gcodes()
+
+				block, err := gcodeblock.Parse("G2 X2")
+				if err != nil {
+					t.Errorf("failed instance a mock gcodeblock: %v", err)
+					return
+				}
+
+				gc = append(gc, *block)
+
+				fmt.Printf("gc::%v\n", gc)
+				fmt.Printf("gc::len %v\n", len(gc))
+
+				gf.Update(gc)
+
+				gc2 := gf.Gcodes()
+				fmt.Printf("gc2::%v\n", gc2)
+				fmt.Printf("gc2::len %v\n", len(gc2))
+
+				if len(gc2) != 2 {
+					t.Errorf("want 2 gcodes updated, got %d", len(gc2))
+					return
+				}
+			})
+		}
+	})
 
 }
 

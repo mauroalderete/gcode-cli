@@ -17,11 +17,11 @@ import (
 // Series of methods allows Update the source of model and save it as a file.
 type GcodeFile struct {
 	source string
-	gcodes []*gcodeblock.GcodeBlock
+	gcodes []gcodeblock.GcodeBlock
 }
 
 // Gcodes returns the lis of blocks found in the source, after parse it, as a list of [gcodeblock.GcodeBlock]
-func (gf *GcodeFile) Gcodes() []*gcodeblock.GcodeBlock {
+func (gf *GcodeFile) Gcodes() []gcodeblock.GcodeBlock {
 	return gf.gcodes
 }
 
@@ -30,16 +30,18 @@ func (gf *GcodeFile) Source() io.Reader {
 	return strings.NewReader(gf.source)
 }
 
-// Refresh parse the gcode source loaded to get a list of [gcodeblock.GcodeBlock]
+// parse parse the gcode source loaded to get a list of [gcodeblock.GcodeBlock]
 //
 // Read the source content line by line to get his [gcodeblock.GcodeBlock] representation.
 //
-// If the source is empty or only contains comments then Refresh parse a list empty.
+// If the source is empty or only contains comments then parse parse a list empty.
 //
 // If the source is nil then refresh returns an error.
 //
-// If the source contain an invalid block then Refresh returns an error.
-func (gf *GcodeFile) Refresh() error {
+// If the source contain an invalid block then parse returns an error.
+func (gf *GcodeFile) parse() error {
+
+	gf.gcodes = gf.gcodes[:0]
 
 	scanner := bufio.NewScanner(gf.Source())
 	for scanner.Scan() {
@@ -60,14 +62,25 @@ func (gf *GcodeFile) Refresh() error {
 			return fmt.Errorf("%v", err)
 		}
 
-		gf.gcodes = append(gf.gcodes, block)
+		gf.gcodes = append(gf.gcodes, *block)
 	}
 
 	return nil
 }
 
 // Update takes the last state of the blocks in the list stored and updates the source with the changes made to this moment.
-func (gf *GcodeFile) Update() error {
+func (gf *GcodeFile) Update(gcodes []gcodeblock.GcodeBlock) error {
+
+	gf.gcodes = gcodes
+
+	content := ""
+
+	for _, block := range gcodes {
+		content += fmt.Sprintf("%s\n", strings.TrimSpace(block.ToLine("%c %p%k %m")))
+	}
+
+	gf.source = content
+
 	return nil
 }
 
@@ -99,11 +112,11 @@ func NewFromReader(source io.Reader) (*GcodeFile, error) {
 	}
 
 	gf := GcodeFile{
-		gcodes: make([]*gcodeblock.GcodeBlock, 0),
+		gcodes: make([]gcodeblock.GcodeBlock, 0),
 		source: string(src),
 	}
 
-	err = gf.Refresh()
+	err = gf.parse()
 	if err != nil {
 		return nil, fmt.Errorf("failed parse source: %v", err)
 	}
