@@ -84,7 +84,14 @@ func (gf *GcodeFile) Update(gcodes []gcodeblock.GcodeBlock) error {
 	return nil
 }
 
+// SaveFile save the gcode modeled in a file on path
 func (gf *GcodeFile) SaveFile(path string) error {
+
+	err := os.WriteFile(path, []byte(gf.source), 0644)
+	if err != nil {
+		return fmt.Errorf("fail to save the gcode file: %v", err)
+	}
+
 	return nil
 }
 

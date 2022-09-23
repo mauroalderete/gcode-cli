@@ -3,6 +3,7 @@ package gcodefile
 import (
 	"fmt"
 	"io"
+	"os"
 	"strings"
 	"testing"
 
@@ -168,5 +169,59 @@ func TestGcodeFile_Update(t *testing.T) {
 }
 
 func TestGcodeFile_SaveFile(t *testing.T) {
+
+	t.Run("valid save", func(t *testing.T) {
+		testFilePath := "../data/testsave.gcode"
+
+		gf, err := NewFromReader(strings.NewReader("G1 X1"))
+		if err != nil {
+			t.Errorf("want error nil, got error %v", err)
+			return
+		}
+
+		if gf == nil {
+			t.Errorf("want gcodefile not nil, got gcodefile nil")
+			return
+		}
+
+		err = gf.SaveFile(testFilePath)
+		if err != nil {
+			t.Errorf("failed save file: want error nil, got error %v", err)
+			return
+		}
+
+		_, err = os.Open(testFilePath)
+		if err != nil {
+			t.Errorf("failed reopen saved file: want error nil, got error %v", err)
+			return
+		}
+
+		err = os.Remove(testFilePath)
+		if err != nil {
+			t.Errorf("failed remove saved file: want error nil, got error %v", err)
+			return
+		}
+	})
+
+	t.Run("invalid save", func(t *testing.T) {
+		testFilePath := "../data/bad folder/testsave.gcode"
+
+		gf, err := NewFromReader(strings.NewReader("G1 X1"))
+		if err != nil {
+			t.Errorf("want error nil, got error %v", err)
+			return
+		}
+
+		if gf == nil {
+			t.Errorf("want gcodefile not nil, got gcodefile nil")
+			return
+		}
+
+		err = gf.SaveFile(testFilePath)
+		if err == nil {
+			t.Errorf("want an error, got error nil")
+			return
+		}
+	})
 
 }
