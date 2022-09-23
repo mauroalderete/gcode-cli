@@ -16,7 +16,7 @@ import (
 // Exposes the list of Gcodes that define the 3d object to process the model or apply changes.
 // Series of methods allows Update the source of model and save it as a file.
 type GcodeFile struct {
-	source io.Reader
+	source string
 	gcodes []*gcodeblock.GcodeBlock
 }
 
@@ -27,7 +27,7 @@ func (gf *GcodeFile) Gcodes() []*gcodeblock.GcodeBlock {
 
 // Source returns the source as [io.Reader] that store the blocks written as plain text line by line.
 func (gf *GcodeFile) Source() io.Reader {
-	return gf.source
+	return strings.NewReader(gf.source)
 }
 
 // Refresh parse the gcode source loaded to get a list of [gcodeblock.GcodeBlock]
@@ -41,7 +41,7 @@ func (gf *GcodeFile) Source() io.Reader {
 // If the source contain an invalid block then Refresh returns an error.
 func (gf *GcodeFile) Refresh() error {
 
-	scanner := bufio.NewScanner(gf.source)
+	scanner := bufio.NewScanner(gf.Source())
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
 
@@ -89,12 +89,21 @@ func NewFromFile(path string) (*GcodeFile, error) {
 // NewFromReader returns a new instance of [GcodeFile] from an [io.Reader] object with the gcode blocks contented.
 func NewFromReader(source io.Reader) (*GcodeFile, error) {
 
-	gf := GcodeFile{
-		gcodes: make([]*gcodeblock.GcodeBlock, 0),
-		source: source,
+	if source == nil {
+		return nil, fmt.Errorf("the source is nil")
 	}
 
-	err := gf.Refresh()
+	src, err := io.ReadAll(source)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read the source: %v", err)
+	}
+
+	gf := GcodeFile{
+		gcodes: make([]*gcodeblock.GcodeBlock, 0),
+		source: string(src),
+	}
+
+	err = gf.Refresh()
 	if err != nil {
 		return nil, fmt.Errorf("failed parse source: %v", err)
 	}
