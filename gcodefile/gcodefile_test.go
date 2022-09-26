@@ -1,7 +1,6 @@
 package gcodefile
 
 import (
-	"fmt"
 	"io"
 	"os"
 	"strings"
@@ -149,14 +148,9 @@ func TestGcodeFile_Update(t *testing.T) {
 
 				gc = append(gc, *block)
 
-				fmt.Printf("gc::%v\n", gc)
-				fmt.Printf("gc::len %v\n", len(gc))
-
 				gf.Update(gc)
 
 				gc2 := gf.Gcodes()
-				fmt.Printf("gc2::%v\n", gc2)
-				fmt.Printf("gc2::len %v\n", len(gc2))
 
 				if len(gc2) != 2 {
 					t.Errorf("want 2 gcodes updated, got %d", len(gc2))
