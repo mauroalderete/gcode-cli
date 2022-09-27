@@ -13,18 +13,18 @@ func TestSkewXY(t *testing.T) {
 		ratio  float32
 		expect []string
 	}{
-		"a": {[]string{"G1 X2 Y1"}, 0.5, []string{"G1 X1.5 Y1"}},
-		"b": {[]string{"G1 X1 Y1"}, 0.5, []string{"G1 X0.5 Y1"}},
-		"c": {[]string{"G1 X1.2 Y1"}, 0.5, []string{"G1 X0.7 Y1"}},
-		"d": {[]string{"G1 X0 Y1"}, 0.5, []string{"G1 X-0.5 Y1"}},
-		"e": {[]string{"G1 X-1 Y1"}, 0.5, []string{"G1 X-1.5 Y1"}},
-		"f": {[]string{"G1 X-1.2 Y1"}, 0.5, []string{"G1 X-1.7 Y1"}},
+		"a": {[]string{"G1 X2 Y1"}, 0.5, []string{"G1 X1.500 Y1"}},
+		"b": {[]string{"G1 X1 Y1"}, 0.5, []string{"G1 X0.500 Y1"}},
+		"c": {[]string{"G1 X1.2 Y1"}, 0.5, []string{"G1 X0.700 Y1"}},
+		"d": {[]string{"G1 X0 Y1"}, 0.5, []string{"G1 X-0.500 Y1"}},
+		"e": {[]string{"G1 X-1 Y1"}, 0.5, []string{"G1 X-1.500 Y1"}},
+		"f": {[]string{"G1 X-1.2 Y1"}, 0.5, []string{"G1 X-1.700 Y1"}},
 		"g": {[]string{
 			"G1 X1 Y1",
 			"G1 X2 Y1",
 		}, 0.5, []string{
-			"G1 X0.5 Y1",
-			"G1 X1.5 Y1",
+			"G1 X0.500 Y1",
+			"G1 X1.500 Y1",
 		}},
 	}
 

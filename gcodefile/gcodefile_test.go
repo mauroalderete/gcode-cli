@@ -37,6 +37,7 @@ func TestNewFromReader(t *testing.T) {
 			"f": {"G1 X2\n\n\nG1 X2", true},
 			"g": {"G1 X2\nG1X2", false},
 			"h": {"1 X2\nG1X2", false},
+			"j": {"G1 X72.850 Y49.311 E15.0003", true},
 		}
 
 		for k, v := range targets {

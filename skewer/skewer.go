@@ -56,7 +56,7 @@ func SkewXY(ratio float32, blocks []gcodeblock.GcodeBlock) ([]gcodeblock.GcodeBl
 
 		blockTransformed, err := gcodeblock.Parse(blockToParse)
 		if err != nil {
-			return nil, fmt.Errorf("failed to generate a new block transformed from block '%s': %v", block.String(), err)
+			return nil, fmt.Errorf("failed to generate a new block transformed from block [%d][%s]: %v", i, block.ToLine("%l %c %p %k %m"), err)
 		}
 
 		// Add block transformed in the list

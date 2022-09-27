@@ -166,7 +166,7 @@ func TestNewXYCommand(t *testing.T) {
 		stdout := stdoutMock{}
 
 		target := "G1 X1 Y3"
-		expect := "G1 X-2.0 Y3\n"
+		expect := "G1 X-2.000 Y3\n"
 
 		cmd := NewXYCommand()
 		cmd.Flags().Lookup("ratio").Value.Set("1")
