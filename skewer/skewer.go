@@ -13,10 +13,10 @@ func SkewXY(ratio float32, blocks []gcodeblock.GcodeBlock) ([]gcodeblock.GcodeBl
 	// List of all blocks include them that must be transformed
 	transformed := make([]gcodeblock.GcodeBlock, 0)
 
-	for _, block := range blocks {
+	for i, block := range blocks {
 
 		// Only with G command
-		if block.Command().Word() != 'G' {
+		if block.Command().String() != "G1" && block.Command().String() != "G0" {
 			transformed = append(transformed, block)
 			continue
 		}
@@ -24,14 +24,15 @@ func SkewXY(ratio float32, blocks []gcodeblock.GcodeBlock) ([]gcodeblock.GcodeBl
 		//Get parameters to gcode X and Y as addressable float32
 		parameters := block.Parameters()
 
-		py, err := getParameterFloat32('Y', parameters)
-		if err != nil {
-			return nil, fmt.Errorf("skewXY expect parameter Y but failed to recover it: %v", err)
-		}
-
 		px, err := getParameterFloat32('X', parameters)
 		if err != nil {
-			return nil, fmt.Errorf("skewXY expect parameter X but failed to recover it: %v", err)
+			transformed = append(transformed, block)
+			continue
+		}
+
+		py, err := getParameterFloat32('Y', parameters)
+		if err != nil {
+			return nil, fmt.Errorf("skewXY expect parameter Y but failed to recover from [%d][%s]: %v", i, block.ToLine("%l %c %p %k %m"), err)
 		}
 
 		// Applies transform
