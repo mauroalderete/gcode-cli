@@ -3,6 +3,7 @@ package cmd
 
 import (
 	"github.com/mauroalderete/gcode-cli/cmd/describe"
+	"github.com/mauroalderete/gcode-cli/cmd/skew"
 	cmdVersion "github.com/mauroalderete/gcode-cli/cmd/version"
 	"github.com/spf13/cobra"
 )
@@ -26,6 +27,7 @@ You can make skew corrections, translations or checksum integrity.`,
 	// init Initializes and configures command
 	cmd.AddCommand(cmdVersion.NewVersionCommand())
 	cmd.AddCommand(describe.NewDescribeCommand())
+	cmd.AddCommand(skew.NewSkewCommand())
 
 	return cmd
 }

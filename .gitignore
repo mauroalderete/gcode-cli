@@ -1,2 +1,4 @@
 [Tt]mp/
 coverage*
+
+build/version*

@@ -38,6 +38,18 @@
 
 # Content <!-- omit in toc -->
 - [:wave: Introducing `gcode-cli`](#wave-introducing-gcode-cli)
+- [Install](#install)
+	- [With go install](#with-go-install)
+	- [From source code](#from-source-code)
+	- [Download binaries](#download-binaries)
+- [Usage](#usage)
+	- [Help commands](#help-commands)
+		- [help](#help)
+		- [version](#version)
+	- [Summary command](#summary-command)
+		- [describe](#describe)
+	- [Skew subcommands](#skew-subcommands)
+		- [Skew on XY plane](#skew-on-xy-plane)
 - [:rocket: Upcomming Features](#rocket-upcomming-features)
 - [:hammer: How to Set up `gcode-cli` for Development?](#hammer-how-to-set-up-gcode-cli-for-development)
 - [:hamburger: Built With](#hamburger-built-with)
@@ -56,13 +68,154 @@ Hey! don't be discouraged, you can help me to carry out this project in many way
 
 Please, look at [Contributing to `gcode-cli`](#handshake-contributing-to-gcode-cli) to choose the way to collaborate that with you feel better.
 
+# Install
+
+## With go install
+
+The latest main version
+
+```sh
+go install github.com/mauroalderete/gcode-cli
+```
+
+Or, use the next command to install a specific version
+
+```sh
+go install github.com/mauroalderete/gcode-cli@v0.4.5
+```
+
+## From source code
+
+Clone this repository and open folder in a terminal
+
+```sh
+git clone https://github.com/mauroalderete/gcode-cli
+cd gcode-cli
+```
+
+Prepare to build
+```sh
+go generate
+```
+
+Execute the build
+
+```sh
+go build
+```
+
+If all goes well, you will have the executable file `gcode-cli`
+
+Optionally, copy this binary in your binary folder preference.
+
+```sh
+cp gcode-cli /usr/bin
+```
+
+```sh
+cp gcode-cli GOPATH/bin
+```
+## Download binaries
+
+
+# Usage
+
+```sh
+gcode-cli [command]
+```
+
+`gcode-cli` makes operations on a source that contains a 3d model written with gcode specifications. This source can come from a file in the filesystem or of stdin passed as a result of another command.
+
+Some subcommands apply a transform operation directly on the content of the source, the result of this can be printed in stdout or a new file.
+
+Other subcommands, instead, generate a summary and although his output only showed on stdout, but can be represented by many formats, usually JSON, YAML or customizable string.ad, generates summary and his output only showed on stdout, but can will be represented by many formats, usually JSON, YAML or customizable string.
+
+## Help commands
+
+### help
+
+```sh
+gcode-cli help
+```
+
+Print a help message about any command
+
+### version
+
+```sh
+gcode-cli version
+```
+
+Print the version number of gcode-cli
+
+## Summary command
+
+### describe
+
+```sh
+gcode-cli describe my-file.gcode --json
+```
+
+Print metadata from gcode source. It allow you get simple info in many formats.
+
+You can use the format flag to pretty-print the text output using a Go template pattern. For example `{{.Filename}}\t{{.LinesCount}}\t{{.BlocksCount}}\t{{.Coverage}}%`.
+The fields available are:
+- Filename: Prints the name of [FILE] it is provided. Otherwise only print an empty character
+- LinesCount: Prints lines quantity containing the source, whatever [FILE] either stdin.
+- BlocksCount: Prints the amount of these lines are valid blocks.
+- Coverage: Prints the percentage of the lines that are blocks
+
+## Skew subcommands
+
+```sh
+gcode-cli skew xy [--ratio|radian|degree <float32>] [--output <filename>] my-file.gcode
+```
+
+The skew subcommand allow apply the math operation to skew the model on an specific plane. This is util to fix the skew issue that present an many 3d machine.
+
+Sometimes the assambly of a 3d machine cause that the angle between his axis hasn't 90 degrees. This ocassions to figure will print them twisted, turned or skewed.
+
+To fix this, gcode-cli include the subcommand skew that allows you apply a masive operation math to correct the skew on an specific plane.
+
+### Skew on XY plane
+
+```sh
+gcode-cli skew xy [--ratio|radian|degree <float32>] [--output <filename>] my-file.gcode
+```
+
+If your models print with a skew probably your 3d printer has not had 90 degrees between axis X and axis Y. In this case, you can use the subcommand skew xy to fix your impressions.
+
+The subcommand requires the ratio to fix the model. The ratio can be to indicated through an angle in degrees, an angle in radians or a ratio in millimetres.
+
+To calculate the ratio that you need to apply in the models you can:
+
+- Print a skew test mdoel to plane XY, for example [this](https://www.thingiverse.com/thing:2563185) or [this](https://www.thingiverse.com/thing:2948908)
+- Align the figure to a carpenter's square (or similar tool). Make sure that the edge of the X-axis side of the print is completely aligned with the edge of the square.
+- Bring the other face of the figure as close as you can to the other face of the square.
+- At this moment, you can observe a space free between the edges of the figure Y axis and the square. This space free can be in the corner of the carpenter's square or in the other extreme.
+- Using a calliper measure the free distance. That is, you need to know how many millimetres on the X axis the figure needs to move so that the separated end can stick to the square.
+- The last data that you need to know is the height of the figure.
+- With these values, you already calculate the ratio following the next formula `ratio = height the figure / offset in x axis`.
+- If the space free was in the corner of the square, then the ratio is negative, otherwise, it is positive.
+
+
+To check if the ratio calculated is correct you can:
+
+- Execute the skew correction command to the model that you used to calculate the skew correction
+```sh
+gcode-cli skew xy --ratio <you value> --output skew-test.gcode my-skew-calibration-model.gcode
+```
+- Print them
+- Check the perpendicular property with a square following the same steps previously described.
+- If the space disappeared, congratulations you can now compensate for the skew of any model you print.
+- Otherwise, repeat the procedure to calculate the ratio until you get the result you are expecting.
+ 
+
 # :rocket: Upcomming Features
 
 `gcode-cli` has all the potential to grow further. Here are some of the upcoming features planned (not in any order),
 
-- ✔️ Handle files.
-- ✔️ Get statics and metrics from files.
-- ✔️ Apply skew corrections.
+- ✔️ Apply skew corrections on ZY plane and XZ plane.
 - ✔️ Files verification.
 - ✔️ Set checksum attribute to improve the integrity of the files.
 
