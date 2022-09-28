@@ -48,17 +48,31 @@ jobs:
           # Push new tag forcing the update of the minor and major tag
           git push --tag --force
 
+      - name: Setup Go Environment
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.18
+
+      - name: Build gcode-cli
+        run: |
+          #!/bin/sh
+
+          go generate
+          go build
+
       - name: Create Release from PR
         id: create-release-from-pr
         if: github.event.head_commit.committer.username == 'web-flow'
         run: |
           #!/bin/sh
+
           # The last commit was committed by GitHub.
           # We assume that the push event come of the a potential pull-request.
           gh release create ${{ steps.semver.outputs.next }} \
           --title 'Release ${{ steps.semver.outputs.next }}' \
           --notes "Changelog Contents :sunglasses:" \
           --generate-notes \
+          ./gcode-cli
 
       - name: Create Release from Commits
         id: create-release-from-commits
@@ -74,3 +88,4 @@ jobs:
           --title 'Release ${{ steps.semver.outputs.next }}' \
           --notes "Changelog Contents :sunglasses:" \
           --generate-notes \
+          ./gcode-cli
