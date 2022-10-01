@@ -72,7 +72,7 @@ With no FILE, or when FILE is -, read standard input.
 
 		gfile, err := gcodefile.NewFromReader(input)
 		if err != nil {
-			return fmt.Errorf("failed instance a gcode file")
+			return fmt.Errorf("failed instance a gcode file: %v", err)
 		}
 
 		blocks := gfile.Gcodes()
