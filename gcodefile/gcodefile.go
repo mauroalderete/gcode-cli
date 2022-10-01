@@ -44,8 +44,10 @@ func (gf *GcodeFile) parse() error {
 	gf.gcodes = gf.gcodes[:0]
 
 	scanner := bufio.NewScanner(gf.Source())
+	lineNumber := 0
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
+		lineNumber++
 
 		//line is empty
 		if len(line) == 0 {
@@ -59,7 +61,7 @@ func (gf *GcodeFile) parse() error {
 
 		block, err := gcodeblock.Parse(line)
 		if err != nil {
-			return fmt.Errorf("%v", err)
+			return fmt.Errorf("failed parse the line [%d][%s]: %v", lineNumber, line, err)
 		}
 
 		gf.gcodes = append(gf.gcodes, *block)
