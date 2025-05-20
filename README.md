@@ -84,6 +84,8 @@ Or, use the next command to install a specific version
 go install github.com/mauroalderete/gcode-cli@v0.4.5
 ```
 
+Note: When using `go install`, the version information is now correctly embedded into the `gcode-cli` binary, allowing `gcode-cli version` to display the proper version.
+
 ## From source code
 
 Clone this repository and open folder in a terminal
@@ -91,11 +93,6 @@ Clone this repository and open folder in a terminal
 ```sh
 git clone https://github.com/mauroalderete/gcode-cli
 cd gcode-cli
-```
-
-Prepare to build
-```sh
-go generate
 ```
 
 Execute the build

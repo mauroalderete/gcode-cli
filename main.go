@@ -5,13 +5,9 @@ package main
 import (
 	"os"
 
-	_ "embed"
-
 	"github.com/mauroalderete/gcode-cli/cmd"
 )
 
-//go:generate build/get_version.sh
-//go:embed version.txt
 var version string
 
 func main() {
