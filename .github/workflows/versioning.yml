@@ -57,8 +57,7 @@ jobs:
         run: |
           #!/bin/sh
 
-          go generate
-          go build
+          go build -ldflags="-X main.version=${{ steps.semver.outputs.next }}" ./...
 
       - name: Create Release from PR
         id: create-release-from-pr
